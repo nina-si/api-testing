@@ -1,0 +1,715 @@
+{
+	"info": {
+		"_postman_id": "d1525692-932e-4f4d-a993-d9d6484a3193",
+		"name": "Comments API Testing",
+		"description": "Collection for API Testing Comments functionality",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "8599760"
+	},
+	"item": [
+		{
+			"name": "Get all Comments",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// Just an example of JSON validation. Here it is not really needed as any type of data can be stored in DB.\r",
+							"\r",
+							"const schema = {\r",
+							"  \"$schema\": \"http://json-schema.org/draft-07/schema#\",\r",
+							"  \"type\": \"array\",\r",
+							"  \"items\": {\r",
+							"    \"type\": \"object\",\r",
+							"    \"properties\": {\r",
+							"      \"postId\": {\r",
+							"        \"type\": \"integer\"\r",
+							"      },\r",
+							"      \"id\": {\r",
+							"        \"type\": \"integer\"\r",
+							"      },\r",
+							"      \"name\": {\r",
+							"        \"type\": \"string\"\r",
+							"      },\r",
+							"      \"email\": {\r",
+							"        \"type\": \"string\",\r",
+							"        \"pattern\": \"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,}$\"\r",
+							"      },\r",
+							"      \"body\": {\r",
+							"        \"type\": \"string\"\r",
+							"      }\r",
+							"    },\r",
+							"    \"required\": [\"postId\", \"id\", \"name\", \"email\", \"body\"],\r",
+							"    \"additionalProperties\": false\r",
+							"  }\r",
+							"};\r",
+							"\r",
+							"const validationResult = tv4.validate(pm.response.json(), schema)\r",
+							"\r",
+							"pm.test(\"Comments response matches the schema\", function () {\r",
+							"    pm.expect(validationResult).to.be.true;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{comments_endpoint}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{comments_endpoint}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create a Comment",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", () => {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"const jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"The comment has been assigned an ID\", () => {\r",
+							"    pm.expect(jsonData).to.be.an('object');\r",
+							"    pm.expect(jsonData.id).to.not.be.null;\r",
+							"    pm.expect(jsonData.id).to.not.be.undefined;\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Created comment matches provided data\", () => {\r",
+							"    pm.expect(jsonData.postId).to.be.equal(pm.collectionVariables.get(\"comment_postId\"));\r",
+							"    pm.expect(jsonData.name).to.be.equal(pm.collectionVariables.get(\"comment_name\"));\r",
+							"    pm.expect(jsonData.email).to.be.equal(pm.collectionVariables.get(\"comment_email\"));\r",
+							"    pm.expect(jsonData.body).to.be.equal(pm.collectionVariables.get(\"comment_body\"));\r",
+							"});\r",
+							"\r",
+							"pm.collectionVariables.set(\"comment_id\", jsonData.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"content-type": true
+				}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json; charset=UTF-8",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"postId\": {{comment_postId}},\r\n    \"name\": \"{{comment_name}}\",\r\n    \"email\": \"{{comment_email}}\",\r\n    \"body\": \"{{comment_body}}\"\r\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/{{comments_endpoint}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{comments_endpoint}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Comment by ID",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const schema = {\r",
+							"  \"$schema\": \"http://json-schema.org/draft-07/schema#\",\r",
+							"    \"type\": \"object\",\r",
+							"    \"properties\": {\r",
+							"      \"postId\": {\r",
+							"        \"type\": \"integer\"\r",
+							"      },\r",
+							"      \"id\": {\r",
+							"        \"type\": \"integer\"\r",
+							"      },\r",
+							"      \"name\": {\r",
+							"        \"type\": \"string\"\r",
+							"      },\r",
+							"      \"email\": {\r",
+							"        \"type\": \"string\",\r",
+							"        \"pattern\": \"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,}$\"\r",
+							"      },\r",
+							"      \"body\": {\r",
+							"        \"type\": \"string\"\r",
+							"      }\r",
+							"    },\r",
+							"    \"required\": [\"postId\", \"id\", \"name\", \"email\", \"body\"],\r",
+							"    \"additionalProperties\": false\r",
+							"};\r",
+							"\r",
+							"const validationResult = tv4.validate(pm.response.json(), schema)\r",
+							"\r",
+							"pm.test(\"Comment matches the schema\", function () {\r",
+							"    pm.expect(validationResult).to.be.true;\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Received comment matches requested id\", function () {\r",
+							"    pm.expect(pm.response.json().id).to.equal(pm.collectionVariables.get(\"comment_id\"));\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{comments_endpoint}}/{{comment_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{comments_endpoint}}",
+						"{{comment_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Comments filtered by postId",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Response body has comments\", () => {\r",
+							"    pm.expect(jsonData).to.not.be.empty;\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Comments have requested postId\", () => {\r",
+							"    const jsonData = pm.response.json();\r",
+							"    const requestedPostId = pm.collectionVariables.get(\"comment_postId\");\r",
+							"\r",
+							"    jsonData.forEach((comment) => {\r",
+							"        pm.expect(comment.postId).to.equal(requestedPostId);\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{comments_endpoint}}?postId={{comment_postId}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{comments_endpoint}}"
+					],
+					"query": [
+						{
+							"key": "postId",
+							"value": "{{comment_postId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all Comments for existing post",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Response body has comments\", () => {\r",
+							"    pm.expect(jsonData).to.not.be.empty;\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Comments have requested postId\", () => {\r",
+							"    const jsonData = pm.response.json();\r",
+							"    const requestedPostId = pm.collectionVariables.get(\"comment_postId\");\r",
+							"\r",
+							"    jsonData.forEach((comment) => {\r",
+							"        pm.expect(comment.postId).to.equal(requestedPostId);\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{posts_endpoint}}/{{comment_postId}}/{{comments_endpoint}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{posts_endpoint}}",
+						"{{comment_postId}}",
+						"{{comments_endpoint}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit Comment",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Updated comment matches provided data\", () => {\r",
+							"    pm.expect(jsonData.postId).to.be.equal(pm.collectionVariables.get(\"comment_postId\"));\r",
+							"    pm.expect(jsonData.name).to.be.equal(pm.collectionVariables.get(\"comment_name\"));\r",
+							"    pm.expect(jsonData.email).to.be.equal(pm.collectionVariables.get(\"comment_email\"));\r",
+							"    pm.expect(jsonData.body).to.be.equal(pm.collectionVariables.get(\"comment_body\"));\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"postId\": {{comment_postId}},\r\n    \"name\": \"{{comment_name}}\",\r\n    \"email\": \"{{comment_email}}\",\r\n    \"body\": \"{{comment_body}}\"\r\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/{{comments_endpoint}}/{{comment_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{comments_endpoint}}",
+						"{{comment_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Patch Comment",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Patched comment matches provided data\", () => {\r",
+							"    pm.expect(jsonData.postId).to.be.equal(pm.collectionVariables.get(\"comment_postId\"));\r",
+							"    pm.expect(jsonData.name).to.be.equal(pm.collectionVariables.get(\"comment_name\"));\r",
+							"    pm.expect(jsonData.email).to.be.equal(pm.collectionVariables.get(\"comment_email\"));\r",
+							"    pm.expect(jsonData.body).to.be.equal(pm.collectionVariables.get(\"comment_body\"));\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"{{comment_name}}\"\r\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/{{comments_endpoint}}/{{comment_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{comments_endpoint}}",
+						"{{comment_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Comment",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Comment deleted from the DB\", () => {\r",
+							"    const base_url = pm.collectionVariables.get(\"base_url\");\r",
+							"    const comments = pm.collectionVariables.get(\"comments_endpoint\");\r",
+							"    const commentId = pm.collectionVariables.get(\"comment_id\");\r",
+							"    const url = base_url + '/' + comments + '/' + commentId;\r",
+							"    pm.sendRequest({\r",
+							"        url,\r",
+							"        method: 'GET',\r",
+							"    }, function (err, response) {\r",
+							"        pm.expect(response.code).to.equal(404);\r",
+							"    });\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{comments_endpoint}}/{{comment_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{comments_endpoint}}",
+						"{{comment_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Comment (non-existent ID) - Verify 404 response",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 404\", () => {\r",
+							"    pm.response.to.have.status(404);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{comments_endpoint}}/{{comment_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{comments_endpoint}}",
+						"{{comment_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get comments by postId (non-existent postId)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Response is empty\", () => {\r",
+							"    pm.expect(jsonData).to.be.an('array').and.to.be.empty;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{posts_endpoint}}/255/{{comments_endpoint}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{posts_endpoint}}",
+						"255",
+						"{{comments_endpoint}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New post setup",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const response = pm.response.json();\r",
+							"\r",
+							"pm.collectionVariables.set('new_post_id', response.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"New post title\",\r\n    \"body\": \"New post body\",\r\n    \"userId\": 1\r\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/{{posts_endpoint}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{posts_endpoint}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get comments for newly created post",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Response is empty\", () => {\r",
+							"    pm.expect(jsonData).to.be.an('array').and.to.be.empty;\r",
+							"});\r",
+							"\r",
+							"// Cleanup created post\r",
+							"\r",
+							"const url = pm.collectionVariables.get('base_url') \r",
+							"    + '/' \r",
+							"    + pm.collectionVariables.get('posts_endpoint') \r",
+							"    + '/' \r",
+							"    + pm.collectionVariables.get('new_post_id');\r",
+							"\r",
+							"pm.sendRequest({\r",
+							"    url,\r",
+							"    method: 'DELETE'\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{posts_endpoint}}/{{new_post_id}}/{{comments_endpoint}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{posts_endpoint}}",
+						"{{new_post_id}}",
+						"{{comments_endpoint}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Load dataset from file",
+					"if (typeof pm.variables.get('requestsParams') !== 'object') {",
+					"  pm.variables.set('requestsParams', pm.iterationData.toObject());",
+					"}",
+					"",
+					"const requestsParams = pm.variables.get('requestsParams');",
+					"",
+					"if (",
+					"  typeof requestsParams !== 'object' ||",
+					"  Object.keys(requestsParams).length === 0",
+					") {",
+					"  console.log('No dataset provided or dataset is invalid.');",
+					"  return;",
+					"}",
+					"",
+					"// Find the current request",
+					"const curRequest = requestsParams.requests.filter(",
+					"  ({ name }) => name === pm.info.requestName",
+					")[0];",
+					"",
+					"if (!curRequest) {",
+					"  console.log(`Request ${pm.info.requestName} has no data.`);",
+					"  return;",
+					"}",
+					"",
+					"const variables = curRequest.data.shift();",
+					"",
+					"for (const [key, value] of Object.entries(variables)) {",
+					"    pm.collectionVariables.set(key, value);",
+					"}",
+					"",
+					"pm.variables.set('requestsParams', requestsParams);",
+					"",
+					"if (curRequest.data.length > 0) {",
+					"  postman.setNextRequest(pm.info.requestName);",
+					"}"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "comments_endpoint",
+			"value": "comments",
+			"type": "string"
+		},
+		{
+			"key": "posts_endpoint",
+			"value": "posts",
+			"type": "string"
+		},
+		{
+			"key": "comment_postId",
+			"value": "1"
+		},
+		{
+			"key": "comment_name",
+			"value": "Default comment name"
+		},
+		{
+			"key": "comment_email",
+			"value": "default@email.com"
+		},
+		{
+			"key": "comment_body",
+			"value": "Default comment body"
+		},
+		{
+			"key": "comment_id",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "new_post_id",
+			"value": ""
+		}
+	]
+}
