@@ -29,5 +29,7 @@ Don't forget to stop json-server after test run.
 ## Test results
 
 After test run, results can be seen:
+
 ![tests summary](./tests_summary.JPG)
+
 ![tests reporting](./tests_reporting.JPG)
