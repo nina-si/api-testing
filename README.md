@@ -15,13 +15,13 @@ For more details, please [follow this link](https://cottony-bosworth-fff.notion.
 4. Start json-server in watch mode:  
    `json-server --watch db.json`
 5. Import a collection into Postman:
-   ![Collection import](./import.jpg)
+   ![Collection import](./import.JPG)
 6. In Postman, choose to run collection manually:
-   ![Test run](./run.jpg)
+   ![Test run](./run.JPG)
 7. In Data > Select file input choose `dataset.json`:
-   ![Dataset select](./data.jpg)
+   ![Dataset select](./data.JPG)
 8. Click 'Run Comments API Testing':
-   ![Run button](./button.jpg)
+   ![Run button](./button.JPG)
 
 You can change dataset or play with requests.
 Don't forget to stop json-server after test run.
@@ -29,5 +29,5 @@ Don't forget to stop json-server after test run.
 ## Test results
 
 After test run, results can be seen:
-![tests summary](./tests_summary.jpg)
-![tests reporting](./tests_reporting.jpg)
+![tests summary](./tests_summary.JPG)
+![tests reporting](./tests_reporting.JPG)
