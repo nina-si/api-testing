@@ -1,0 +1,36 @@
+[
+  {
+    "requests": [
+      {
+        "name": "Create a Comment",
+        "data": [
+          {
+            "comment_postId": 1,
+            "comment_name": "Hallo",
+            "comment_email": "test123@email.de",
+            "comment_body": "Body text of created comment!"
+          }
+        ]
+      },
+      {
+        "name": "Edit Comment",
+        "data": [
+          {
+            "comment_postId": 1,
+            "comment_name": "Updated post",
+            "comment_email": "updated@email.biz",
+            "comment_body": "Updated body text"
+          }
+        ]
+      },
+      {
+        "name": "Patch Comment",
+        "data": [
+          {
+            "comment_name": "Patched comment name"
+          }
+        ]
+      }
+    ]
+  }
+]
