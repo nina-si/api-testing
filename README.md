@@ -1,6 +1,6 @@
 # API Testing
 
-This repository contains an example of API tests with Postman Collection Runner.
+This repository contains an example of API tests with Postman Collection Runner and dataset.
 
 For more details, please [follow this link](https://cottony-bosworth-fff.notion.site/API-Testing-Challenge-568fe8bc8ef7405a899fc6036f6cc122?pvs=4).
 
@@ -15,24 +15,24 @@ For more details, please [follow this link](https://cottony-bosworth-fff.notion.
 3. Install dependencies:  
    `npm install -g json-server`
 
-4. Start json-server in watch mode:  
+4. Start json-server in a watch mode:  
    `json-server --watch db.json`
 
-5. Import a collection into Postman:
+5. Import a collection from this folder (`Comments API Testing.postman_collection.json`) into Postman:
 
-   ![Collection import](./import.JPG)
+   ![Collection import](./assets/import.jpg)
 
 6. In Postman, choose to run collection manually:
 
-   ![Test run](./run.JPG)
+   ![Test run](./assets/run.jpg)
 
-7. In Data > Select file input choose `dataset.json`:
+7. In _Data > Select file_ choose file `dataset.json` from this folder:
 
-   ![Dataset select](./data.JPG)
+   ![Dataset select](./assets/data.jpg)
 
-8. Click 'Run Comments API Testing':
+8. Click _Run Comments API Testing_:
 
-   ![Run button](./button.JPG)
+   ![Run button](./assets/button.jpg)
 
 You can change dataset or play with requests.
 Don't forget to stop json-server after test run.
@@ -41,6 +41,6 @@ Don't forget to stop json-server after test run.
 
 After test run, results can be seen:
 
-![tests summary](./tests_summary.JPG)
+![tests summary](./assets/tests_summary.jpg)
 
-![tests reporting](./tests_reporting.JPG)
+![tests reporting](./assets/tests_reporting.jpg)
